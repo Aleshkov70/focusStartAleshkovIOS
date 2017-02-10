@@ -11,35 +11,42 @@ import Foundation
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    @IBOutlet weak var myTableView: UITableView!
     var date: String!
     var titles: String!
     var type: String!
     var content: String?
     var source: String?
     var network: String?
-    var imageView: UIImage?
+    var count = 0
     
+    var imageView: UIImage?
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return count
     }
+
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var textCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextTableViewCell
-        var imageCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
-        var socialCell = tableView.dequeueReusableCell(withIdentifier: "socialCell", for: indexPath) as! SocialTableViewCell
         
+        let textCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextTableViewCell
+        let imageCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
+        let socialCell = tableView.dequeueReusableCell(withIdentifier: "socialCell", for: indexPath) as! SocialTableViewCell
+
+        readJson()
+
         if type == "text" {
             textCell.dateLabel.text = date
             textCell.titleLabel.text = titles
             textCell.messageLabel.text = content
+            return textCell
         }
         
         if type == "image" {
             imageCell.dateLabel.text = date
             imageCell.titleLabel.text = titles
             
-            let url = URL(string: content!)
+            let url = URL(string: source!)
             
             let task = URLSession.shared.dataTask(with: url!) { data, response, error in
                 guard let data = data, error == nil else { return }
@@ -49,6 +56,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
             }
             task.resume()
+            return imageCell
         }
         
         if type == "social" {
@@ -56,38 +64,30 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             socialCell.titleLabel.text = titles
             if network == "twitter" {
                 socialCell.iconImage.image = #imageLiteral(resourceName: "twitter")
-                let url = URL(string: source!)
+//                let url = URL(string: source!)
             }
             if network == "facebook" {
                 socialCell.iconImage.image = #imageLiteral(resourceName: "Facebook")
-                let url = URL(string: source!)
+//                let url = URL(string: source!)
             }
             if network == "vkontakte" {
                 socialCell.iconImage.image = #imageLiteral(resourceName: "vkontakte")
-                let url = URL(string: source!)
+//                let url = URL(string: source!)
             }
-        }
-        if type == "social" {
             return socialCell
-        } else {
-            if type == "image" {
-                return imageCell
-            } else {
-                return textCell
-            }
         }
+
+        return textCell
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         readJson()
+        self.myTableView.estimatedRowHeight = 44
+        self.myTableView.rowHeight = UITableViewAutomaticDimension
+        readJson()
+        
         // Do any additional setup after loading the view, typically from a nib.
 
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     private func readJson() {
@@ -95,16 +95,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             if let file = Bundle.main.url(forResource: "messages", withExtension: "json") {
                 let data = try Data(contentsOf: file)
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
-                if let object = json as? [String: Any] {
-                    // json is a dictionary
-                    print(object)
-                    
-                } else if let object = json as? [Any] {
-                    // json is an array
-                    //                    print(object)
-                    readArray(array: object)
-                } else {
-                    print("JSON is invalid")
+                if let object = json as? [Any] {
+                    if count == 0 {
+                        count = object.count
+                    } else {
+                        // json is an array
+                        //                    print(object)
+                        readArray(array: object)
+                    }
                 }
             } else {
                 print("no file")
@@ -116,9 +114,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     
     func readArray(array: [Any]) {
-        for i in 0..<array.count {
+        count -= 1
+        print(count)
+        if count != 0 {
             do {
-                let jsonData = try JSONSerialization.data(withJSONObject: array[i], options: JSONSerialization.WritingOptions.prettyPrinted)
+                let jsonData = try JSONSerialization.data(withJSONObject: array[count], options: JSONSerialization.WritingOptions.prettyPrinted)
                 let json = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: AnyObject]
                 
                 date = json?["date"] as! String!
