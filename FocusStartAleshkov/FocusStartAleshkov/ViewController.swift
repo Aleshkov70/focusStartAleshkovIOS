@@ -12,79 +12,79 @@ import Foundation
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var myTableView: UITableView!
-    var date: String!
-    var titles: String!
-    var type: String!
-    var content: String?
-    var source: String?
-    var network: String?
-    var count = 0
-    
-    var imageView: UIImage?
+    var array: [Any] = []
+    var dict: [String: Any] = [:]
+    var count: Int = -1
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return count
+        return array.count
     }
-
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let textCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextTableViewCell
-        let imageCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
-        let socialCell = tableView.dequeueReusableCell(withIdentifier: "socialCell", for: indexPath) as! SocialTableViewCell
-
-        readJson()
-
-        if type == "text" {
-            textCell.dateLabel.text = date
-            textCell.titleLabel.text = titles
-            textCell.messageLabel.text = content
-            return textCell
-        }
         
-        if type == "image" {
-            imageCell.dateLabel.text = date
-            imageCell.titleLabel.text = titles
-            
-            let url = URL(string: source!)
-            
-            let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-                guard let data = data, error == nil else { return }
+        if count < array.count {
+            count += 1
+            if count != array.count {
+                makeDictionary(array: array, number: count)
                 
-                DispatchQueue.main.sync() {
-                    imageCell.pictureImage.image = UIImage(data: data)
+                let textCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextTableViewCell
+                let imageCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
+                let socialCell = tableView.dequeueReusableCell(withIdentifier: "socialCell", for: indexPath) as! SocialTableViewCell
+                
+                if dict["type"] as! String! == "text" {
+                    textCell.titleLabel.text = dict["title"] as! String!
+                    textCell.dateLabel.text = dict["date"] as! String!
+                    textCell.messageLabel.text = dict["content"] as! String!
+                    return textCell
                 }
+                
+                if dict["type"] as! String == "image" {
+                    imageCell.dateLabel.text = dict["date"] as! String!
+                    imageCell.titleLabel.text = dict["title"] as! String!
+                    
+                    let url = URL(string: dict["source"] as! String!)
+                    let task = URLSession.shared.dataTask(with: url!) { data, response, error in
+                        guard let data = data, error == nil else { return }
+                        DispatchQueue.main.sync() {
+                            imageCell.pictureImage.image = UIImage(data: data)
+                        }
+                    }
+                    task.resume()
+                    
+                    return imageCell
+                }
+                
+                if dict["type"] as! String! == "social" {
+                    socialCell.dateLabel.text = dict["date"] as! String!
+                    socialCell.titleLabel.text = dict["title"] as! String!
+                    if dict["network"] as! String == "twitter" {
+                        socialCell.iconImage.image = #imageLiteral(resourceName: "twitter")
+                        //                let url = URL(string: source!)
+                    }
+                    if dict["network"] as! String == "facebook" {
+                        socialCell.iconImage.image = #imageLiteral(resourceName: "Facebook")
+                        //                let url = URL(string: source!)
+                    }
+                    if dict["network"] as! String == "vkontakte" {
+                        socialCell.iconImage.image = #imageLiteral(resourceName: "vkontakte")
+                        //                let url = URL(string: source!)
+                    }
+                    return socialCell
+                    
+                }
+            } else {
+                print("out of range")
             }
-            task.resume()
-            return imageCell
         }
-        
-        if type == "social" {
-            socialCell.dateLabel.text = date
-            socialCell.titleLabel.text = titles
-            if network == "twitter" {
-                socialCell.iconImage.image = #imageLiteral(resourceName: "twitter")
-//                let url = URL(string: source!)
-            }
-            if network == "facebook" {
-                socialCell.iconImage.image = #imageLiteral(resourceName: "Facebook")
-//                let url = URL(string: source!)
-            }
-            if network == "vkontakte" {
-                socialCell.iconImage.image = #imageLiteral(resourceName: "vkontakte")
-//                let url = URL(string: source!)
-            }
-            return socialCell
-        }
-
-        return textCell
+        fatalError("💥 Unexpected behaviour: only 3 tables are supported")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.myTableView.estimatedRowHeight = 44
-        self.myTableView.rowHeight = UITableViewAutomaticDimension
         readJson()
+        self.myTableView.estimatedRowHeight = 100
+        self.myTableView.rowHeight = UITableViewAutomaticDimension
         
         // Do any additional setup after loading the view, typically from a nib.
 
@@ -96,13 +96,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 let data = try Data(contentsOf: file)
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 if let object = json as? [Any] {
-                    if count == 0 {
-                        count = object.count
-                    } else {
-                        // json is an array
-                        //                    print(object)
-                        readArray(array: object)
-                    }
+                    array = object
+//                    readArray(array: object)
                 }
             } else {
                 print("no file")
@@ -112,39 +107,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-    
-    func readArray(array: [Any]) {
-        count -= 1
-        print(count)
-        if count != 0 {
+    func makeDictionary(array: [Any], number: Int) {
             do {
-                let jsonData = try JSONSerialization.data(withJSONObject: array[count], options: JSONSerialization.WritingOptions.prettyPrinted)
-                let json = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: AnyObject]
-                
-                date = json?["date"] as! String!
-                titles = json?["title"] as! String!
-                type = json?["type"] as! String!
-
-                if source != nil {
-                    print("source is nil")
-                } else {
-                    source = json?["source"] as! String?
-                }
-                
-                if network != nil {
-                    print("network is nil")
-                } else {
-                    network = json?["network"] as! String?
-                }
-                
-                if content != nil {
-                    print("content is nil")
-                } else {
-                    content = json!["content"] as! String?
-                }
+                let jsonData = try JSONSerialization.data(withJSONObject: array[number], options: JSONSerialization.WritingOptions.prettyPrinted)
+                let json = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: Any]
+                dict = json!
             } catch {
                 print("oops")
             }
         }
-    }
+
 }

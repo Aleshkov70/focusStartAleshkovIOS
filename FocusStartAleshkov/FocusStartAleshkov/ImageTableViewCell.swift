@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreGraphics
 
 class ImageTableViewCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
