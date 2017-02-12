@@ -10,94 +10,140 @@ import UIKit
 import Foundation
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
-    @IBOutlet weak var myTableView: UITableView!
-    var array: [Any] = []
-    var dict: [String: Any] = [:]
-    var count: Int = -1
 
+    @IBOutlet weak var mainTableView: UITableView!
+    var arrayOfDictionary: [[String : Any]] = []
+    var photoArray: [Any] = []
+    var iconArray: [Any] = []
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return array.count
+        return arrayOfDictionary.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return arrayOfDictionary.count
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         
-        if count < array.count {
-            count += 1
-            if count != array.count {
-                makeDictionary(array: array, number: count)
-                
-                let textCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextTableViewCell
-                let imageCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
-                let socialCell = tableView.dequeueReusableCell(withIdentifier: "socialCell", for: indexPath) as! SocialTableViewCell
-                
-                if dict["type"] as! String! == "text" {
-                    textCell.titleLabel.text = dict["title"] as! String!
-                    textCell.dateLabel.text = dict["date"] as! String!
-                    textCell.messageLabel.text = dict["content"] as! String!
-                    return textCell
-                }
-                
-                if dict["type"] as! String == "image" {
-                    imageCell.dateLabel.text = dict["date"] as! String!
-                    imageCell.titleLabel.text = dict["title"] as! String!
-                    
-                    let url = URL(string: dict["source"] as! String!)
-                    let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-                        guard let data = data, error == nil else { return }
-                        DispatchQueue.main.sync() {
-                            imageCell.pictureImage.image = UIImage(data: data)
-                        }
-                    }
-                    task.resume()
-                    
-                    return imageCell
-                }
-                
-                if dict["type"] as! String! == "social" {
-                    socialCell.dateLabel.text = dict["date"] as! String!
-                    socialCell.titleLabel.text = dict["title"] as! String!
-                    if dict["network"] as! String == "twitter" {
-                        socialCell.iconImage.image = #imageLiteral(resourceName: "twitter")
-                        //                let url = URL(string: source!)
-                    }
-                    if dict["network"] as! String == "facebook" {
-                        socialCell.iconImage.image = #imageLiteral(resourceName: "Facebook")
-                        //                let url = URL(string: source!)
-                    }
-                    if dict["network"] as! String == "vkontakte" {
-                        socialCell.iconImage.image = #imageLiteral(resourceName: "vkontakte")
-                        //                let url = URL(string: source!)
-                    }
-                    return socialCell
-                    
-                }
-            } else {
-                print("out of range")
-            }
-        }
-        fatalError("💥 Unexpected behaviour: only 3 tables are supported")
+        cell.dateLabel.text = arrayOfDictionary[indexPath.row]["date"] as! String?
+        cell.titleLabel.text = arrayOfDictionary[indexPath.row]["title"] as! String?
+        cell.messageLabel.text = arrayOfDictionary[indexPath.row]["content"] as! String?
+        cell.downloadImage.image = photoArray[indexPath.row] as? UIImage
+        cell.labelImage.image = iconArray[indexPath.row] as? UIImage
+        
+        return cell
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        readJson()
-        self.myTableView.estimatedRowHeight = 100
-        self.myTableView.rowHeight = UITableViewAutomaticDimension
-        
-        // Do any additional setup after loading the view, typically from a nib.
-
+        mainTableView.estimatedRowHeight = 80
+        mainTableView.rowHeight = UITableViewAutomaticDimension
+        readFileJson()
+        sortArray()
+        photoArray = downloadImage(photoArray)
+        iconArray = setIcon(iconArray)
     }
     
-    private func readJson() {
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    
+    func sortArray() {
+        var sortedArray: [[String : Any]] = arrayOfDictionary
+        
+        for i in 0 ..< sortedArray.count {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            var dic: [String : Any] = sortedArray[i]
+            let date = dateFormatter.date(from: dic["date"] as! String!)
+            sortedArray[i].updateValue(date ?? "", forKey: "date")
+        }
+        
+        sortedArray = insertionSort(sortedArray)
+        
+        for i in 0 ..< sortedArray.count {
+            let dateFormatter = DateFormatter()
+            var dic: [String : Any] = sortedArray[i]
+            let date = dic["date"] as! Date
+            dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+            let newDate = dateFormatter.string(from: date)
+            sortedArray[i].updateValue(newDate, forKey: "date")
+        }
+        arrayOfDictionary = sortedArray
+    }
+    
+    func insertionSort(_ array: [[String : Any]]) -> [[String : Any]] {
+        
+        var sortedArray = array
+        for i in 1 ..< sortedArray.count {
+            var y = i
+            while y > 0 && (sortedArray[y]["date"] as! Date) > (sortedArray[y-1]["date"] as! Date) {
+                swap(&sortedArray[y-1], &sortedArray[y])
+                y -= 1
+            }
+        }
+        return sortedArray
+    }
+    
+    private func setIcon(_ array: [Any]) -> [Any] {
+        var icon: [Any] = array
+        for i in 0 ..< arrayOfDictionary.count {
+            icon.append(i)
+            if arrayOfDictionary[i]["type"] as? String == "social" {
+                switch arrayOfDictionary[i]["network"] as! String {
+                case "vkontakte":
+                    icon[i] = #imageLiteral(resourceName: "vkontakte")
+                case "facebook":
+                    icon[i] = #imageLiteral(resourceName: "Facebook")
+                case "twitter":
+                    icon[i] = #imageLiteral(resourceName: "twitter")
+                default:
+                    break
+                }
+            } else {
+                icon[i] = UIImage()
+            }
+        }
+        iconArray = icon
+        return icon
+    }
+    
+    private func downloadImage(_ array: [Any]) -> [Any] {
+        var photo: [Any] = array
+        for i in 0 ..< arrayOfDictionary.count {
+            photo.append(i)
+            if arrayOfDictionary[i]["source"] as? String != nil && arrayOfDictionary[i]["type"] as? String == "image" {
+                let url = URL(string: arrayOfDictionary[i]["source"] as! String)
+                let task = URLSession.shared.dataTask(with: url!) { data, response, error in
+                    guard let data = data, error == nil else { return }
+                    
+                    DispatchQueue.main.sync() {
+                        photo[i] = UIImage(data: data)!
+                        self.photoArray = photo
+                    }
+                }
+                task.resume()
+            } else {
+                photo[i] = UIImage()
+            }
+        }
+        return photo
+    }
+    
+    private func readFileJson() {
         do {
             if let file = Bundle.main.url(forResource: "messages", withExtension: "json") {
                 let data = try Data(contentsOf: file)
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
-                if let object = json as? [Any] {
-                    array = object
-//                    readArray(array: object)
+                if let object = json as? [[String : Any]] {
+                    arrayOfDictionary = object
+                } else {
+                    print("JSON is invalid")
                 }
             } else {
                 print("no file")
@@ -106,15 +152,4 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             print(error.localizedDescription)
         }
     }
-    
-    func makeDictionary(array: [Any], number: Int) {
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: array[number], options: JSONSerialization.WritingOptions.prettyPrinted)
-                let json = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: Any]
-                dict = json!
-            } catch {
-                print("oops")
-            }
-        }
-
 }

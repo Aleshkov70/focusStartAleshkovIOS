@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		550B48871E4DF2CE00ACD2C8 /* TextTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550B48861E4DF2CE00ACD2C8 /* TextTableViewCell.swift */; };
-		550B48891E4DF2DA00ACD2C8 /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550B48881E4DF2DA00ACD2C8 /* ImageTableViewCell.swift */; };
-		550B488B1E4DF2E500ACD2C8 /* SocialTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550B488A1E4DF2E500ACD2C8 /* SocialTableViewCell.swift */; };
+		5565CF9D1E4F237E00A2B14A /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5565CF9C1E4F237E00A2B14A /* CustomTableViewCell.swift */; };
 		5578F9211E4CC09B003974F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9201E4CC09B003974F0 /* AppDelegate.swift */; };
 		5578F9231E4CC09B003974F0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9221E4CC09B003974F0 /* ViewController.swift */; };
 		5578F9261E4CC09B003974F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5578F9241E4CC09B003974F0 /* Main.storyboard */; };
@@ -18,8 +16,6 @@
 		5578F9361E4CC09B003974F0 /* FocusStartAleshkovTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9351E4CC09B003974F0 /* FocusStartAleshkovTests.swift */; };
 		5578F9411E4CC09B003974F0 /* FocusStartAleshkovUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9401E4CC09B003974F0 /* FocusStartAleshkovUITests.swift */; };
 		5578F94F1E4CC0EC003974F0 /* messages.json in Resources */ = {isa = PBXBuildFile; fileRef = 5578F94E1E4CC0EC003974F0 /* messages.json */; };
-		5578F9511E4CC175003974F0 /* JsonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9501E4CC175003974F0 /* JsonData.swift */; };
-		5578F9551E4DE6AA003974F0 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5578F9541E4DE6AA003974F0 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,9 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		550B48861E4DF2CE00ACD2C8 /* TextTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextTableViewCell.swift; sourceTree = "<group>"; };
-		550B48881E4DF2DA00ACD2C8 /* ImageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
-		550B488A1E4DF2E500ACD2C8 /* SocialTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialTableViewCell.swift; sourceTree = "<group>"; };
+		5565CF9C1E4F237E00A2B14A /* CustomTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		5578F91D1E4CC09B003974F0 /* FocusStartAleshkov.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusStartAleshkov.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5578F9201E4CC09B003974F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5578F9221E4CC09B003974F0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,8 +51,6 @@
 		5578F9401E4CC09B003974F0 /* FocusStartAleshkovUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusStartAleshkovUITests.swift; sourceTree = "<group>"; };
 		5578F9421E4CC09B003974F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5578F94E1E4CC0EC003974F0 /* messages.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = messages.json; path = ../../../../Downloads/Test_iOS/messages.json; sourceTree = "<group>"; };
-		5578F9501E4CC175003974F0 /* JsonData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonData.swift; sourceTree = "<group>"; };
-		5578F9541E4DE6AA003974F0 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,9 +81,7 @@
 		550B48811E4DF27500ACD2C8 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				550B48861E4DF2CE00ACD2C8 /* TextTableViewCell.swift */,
-				550B48881E4DF2DA00ACD2C8 /* ImageTableViewCell.swift */,
-				550B488A1E4DF2E500ACD2C8 /* SocialTableViewCell.swift */,
+				5565CF9C1E4F237E00A2B14A /* CustomTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -120,10 +110,8 @@
 			isa = PBXGroup;
 			children = (
 				550B48811E4DF27500ACD2C8 /* Cells */,
-				5578F9531E4CC519003974F0 /* Sources */,
 				5578F9521E4CC4F8003974F0 /* Resources */,
 				5578F9201E4CC09B003974F0 /* AppDelegate.swift */,
-				5578F9541E4DE6AA003974F0 /* TableViewController.swift */,
 				5578F9221E4CC09B003974F0 /* ViewController.swift */,
 				5578F9241E4CC09B003974F0 /* Main.storyboard */,
 				5578F9271E4CC09B003974F0 /* Assets.xcassets */,
@@ -157,14 +145,6 @@
 			children = (
 			);
 			name = Resources;
-			sourceTree = "<group>";
-		};
-		5578F9531E4CC519003974F0 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				5578F9501E4CC175003974F0 /* JsonData.swift */,
-			);
-			name = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,13 +285,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5578F9511E4CC175003974F0 /* JsonData.swift in Sources */,
 				5578F9231E4CC09B003974F0 /* ViewController.swift in Sources */,
+				5565CF9D1E4F237E00A2B14A /* CustomTableViewCell.swift in Sources */,
 				5578F9211E4CC09B003974F0 /* AppDelegate.swift in Sources */,
-				550B48891E4DF2DA00ACD2C8 /* ImageTableViewCell.swift in Sources */,
-				550B488B1E4DF2E500ACD2C8 /* SocialTableViewCell.swift in Sources */,
-				5578F9551E4DE6AA003974F0 /* TableViewController.swift in Sources */,
-				550B48871E4DF2CE00ACD2C8 /* TextTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
