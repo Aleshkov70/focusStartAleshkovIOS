@@ -8,9 +8,10 @@
 
 import UIKit
 import Foundation
+import CoreGraphics
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    
     @IBOutlet weak var mainTableView: UITableView!
     var arrayOfDictionary: [[String : Any]] = []
     var photoArray: [Any] = []
@@ -33,14 +34,31 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.messageLabel.text = arrayOfDictionary[indexPath.row]["content"] as! String?
         cell.downloadImage.image = photoArray[indexPath.row] as? UIImage
         cell.labelImage.image = iconArray[indexPath.row] as? UIImage
-        
         return cell
+    }
+    
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if arrayOfDictionary[indexPath.row]["type"] as! String == "social" {
+            if let requestUrl = NSURL(string: arrayOfDictionary[indexPath.row]["source"] as! String) {
+                UIApplication.shared.openURL(requestUrl as URL)
+            }
+        }
+        
+        if arrayOfDictionary[indexPath.row]["type"] as! String == "image" {
+            
+            let imageView = UIImageView(image: photoArray[indexPath.row] as? UIImage)
+            imageView.frame = self.view.frame
+            imageView.backgroundColor = UIColor.black
+            imageView.contentMode = .scaleAspectFit
+            
+            self.view.addSubview(imageView)
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        mainTableView.estimatedRowHeight = 80
         mainTableView.rowHeight = UITableViewAutomaticDimension
+        mainTableView.estimatedRowHeight = 200
         readFileJson()
         sortArray()
         photoArray = downloadImage(photoArray)
